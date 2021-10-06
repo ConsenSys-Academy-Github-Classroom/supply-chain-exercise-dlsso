@@ -3,15 +3,24 @@ pragma solidity >=0.5.16 <0.9.0;
 
 contract SupplyChain {
 
-  // <owner>
+  address public owner;
 
-  // <skuCount>
+  uint public skuCount;
 
   // <items mapping>
 
   // <enum State: ForSale, Sold, Shipped, Received>
+  enum State { ForSale, Sold, Shipped, Received }
 
   // <struct Item: name, sku, price, state, seller, and buyer>
+  struct Item {
+    string name;
+    uint sku;
+    uint price;
+    State state;
+    address payable seller;
+    address payable buyer;
+  }
   
   /* 
    * Events
@@ -68,6 +77,8 @@ contract SupplyChain {
   constructor() public {
     // 1. Set the owner to the transaction sender
     // 2. Initialize the sku count to 0. Question, is this necessary?
+    owner = msg.sender;
+    skuCount = 0;
   }
 
   function addItem(string memory _name, uint _price) public returns (bool) {
