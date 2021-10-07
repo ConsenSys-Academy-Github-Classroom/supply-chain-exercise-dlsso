@@ -29,8 +29,7 @@ contract SupplyChain {
 
   event LogSold(uint sku);
 
-  // <LogShipped event: sku arg>
-
+  event LogShipped(uint sku);
   // <LogReceived event: sku arg>
 
 
@@ -43,7 +42,7 @@ contract SupplyChain {
   // <modifier: isOwner
 
   modifier verifyCaller (address _address) { 
-    // require (msg.sender == _address); 
+    require (msg.sender == _address);
     _;
   }
 
@@ -72,7 +71,11 @@ contract SupplyChain {
     require(items[_sku].buyer == address(0));
     _;
   }
-  // modifier sold(uint _sku) 
+
+  modifier sold(uint _sku) {
+    require(items[_sku].state == State.Sold);
+    _;
+  }
   // modifier shipped(uint _sku) 
   // modifier received(uint _sku) 
 
@@ -129,7 +132,11 @@ contract SupplyChain {
   //    - the person calling this function is the seller. 
   // 2. Change the state of the item to shipped. 
   // 3. call the event associated with this function!
-  function shipItem(uint sku) public {}
+  function shipItem(uint sku) public sold(sku) verifyCaller(items[sku].seller)
+  {
+    items[sku].state = State.Shipped;
+    emit LogShipped(sku);
+  }
 
   // 1. Add modifiers to check 
   //    - the item is shipped already 
